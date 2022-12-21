@@ -17,7 +17,9 @@
 
   const getVideoSource = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
       video.srcObject = stream;
       video.play();
     } catch {
@@ -57,7 +59,7 @@
       <video autoplay playsinline bind:this={video} id="video" />
       <div
         id="videoEdge"
-        style="width:{edge.width}px; height:{edge.height}px; margin-left:{edge.marginX}px; margin-top:{edge.marginY}px"
+        style="width:{edge.width}px; height:{edge.height}px;"
         bind:this={imageEdge}
       />
     </div>
@@ -77,6 +79,7 @@
     position: relative;
     width: 100%;
     max-width: 1000px;
+    max-height: 800px;
   }
   #videoEdge {
     z-index: 1;
@@ -85,6 +88,7 @@
     left: 0;
     border: 2px solid red;
     border-radius: 10px;
+    transform: translate(30%, 50%);
   }
   #canvas {
     transform: rotate(0deg);
