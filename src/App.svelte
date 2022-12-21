@@ -6,9 +6,9 @@
   };
   const RATIO = 1.2;
   $: edge = {
-    marginX: IMAGE.width / 4 / RATIO,
+    marginX: IMAGE.width / 4,
     marginY: IMAGE.height / 4,
-    width: (IMAGE.width / 2) * RATIO,
+    width: IMAGE.width / 2,
     height: IMAGE.height / 2,
   };
   let video: HTMLVideoElement = null;
@@ -41,8 +41,8 @@
 
   const observer = new ResizeObserver((entries) => {
     for (let entry of entries) {
-      const { width, height } = entry.contentRect;
-      IMAGE = { width, height };
+      const { width } = entry.contentRect;
+      IMAGE = { width, height: width / 1.5 };
     }
   });
 
@@ -79,16 +79,14 @@
     position: relative;
     width: 100%;
     max-width: 1000px;
-    max-height: 800px;
   }
   #videoEdge {
     z-index: 1;
     position: absolute;
     top: 0;
-    left: 0;
     border: 2px solid red;
     border-radius: 10px;
-    transform: translate(30%, 50%);
+    transform: translate(50%, 50%);
   }
   #canvas {
     transform: rotate(0deg);
