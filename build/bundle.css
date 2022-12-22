@@ -1,1 +1,1 @@
-#video.svelte-n4i0x5{transform:rotate(0deg);position:relative;width:100%;max-width:1000px}#videoEdge.svelte-n4i0x5{z-index:1;position:absolute;top:0;border:2px solid red;border-radius:10px;transform:translate(50%, 50%)}#canvas.svelte-n4i0x5{transform:rotate(0deg);position:relative}
+#video.svelte-krpx9b{position:relative;width:100%;max-width:1000px}#videoEdge.svelte-krpx9b{z-index:1;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);border:2px solid red;border-radius:10px}#canvas.svelte-krpx9b{position:relative}
