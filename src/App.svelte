@@ -1,16 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  let IMAGE = {
-    width: 0,
-    height: 0,
-  };
-  const RATIO = 1.2;
-  $: edge = {
-    marginX: IMAGE.width / 4,
-    marginY: IMAGE.height / 4,
-    width: IMAGE.width / 2,
-    height: IMAGE.height / 2,
-  };
+  let IMAGE = { width: 0, height: 0 };
+  let BOUNDARY = { left: 0, top: 0 };
   let video: HTMLVideoElement = null;
   let canvas: HTMLCanvasElement = null;
   let imageEdge: HTMLElement = null;
@@ -32,17 +23,23 @@
     picture.clearRect(0, 0, IMAGE.width, IMAGE.height);
     picture.drawImage(
       video,
-      -edge.marginX,
-      -edge.marginY,
+      -BOUNDARY.left,
+      -BOUNDARY.top,
       IMAGE.width,
       IMAGE.height
     );
   };
 
+  const getOffset = (el: HTMLElement) => {
+    const rect = el.getBoundingClientRect();
+    return { left: rect.left + window.scrollX, top: rect.top + window.scrollY };
+  };
   const observer = new ResizeObserver((entries) => {
     for (let entry of entries) {
-      const { width } = entry.contentRect;
-      IMAGE = { width, height: width / 1.5 };
+      const { width, height } = entry.contentRect;
+      const { left, top } = getOffset(imageEdge);
+      IMAGE = { width, height };
+      BOUNDARY = { left, top };
     }
   });
 
@@ -59,7 +56,7 @@
       <video autoplay playsinline bind:this={video} id="video" />
       <div
         id="videoEdge"
-        style="width:{edge.width}px; height:{edge.height}px;"
+        style="width:{IMAGE.width / 2.5}px; height:{IMAGE.width / 4}px;"
         bind:this={imageEdge}
       />
     </div>
@@ -67,15 +64,14 @@
   </div>
   <canvas
     id="canvas"
-    width={edge.width}
-    height={edge.height}
+    width={IMAGE.width / 2.5}
+    height={IMAGE.width / 4}
     bind:this={canvas}
   />
 </main>
 
 <style>
   #video {
-    transform: rotate(0deg);
     position: relative;
     width: 100%;
     max-width: 1000px;
@@ -83,13 +79,13 @@
   #videoEdge {
     z-index: 1;
     position: absolute;
-    top: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     border: 2px solid red;
     border-radius: 10px;
-    transform: translate(50%, 50%);
   }
   #canvas {
-    transform: rotate(0deg);
     position: relative;
   }
 </style>
