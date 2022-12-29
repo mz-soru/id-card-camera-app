@@ -1,14 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  const ratio = 0.625;
-  let IMAGE = { width: 0, height: 0 };
-  $: BOUNDARY_SIZE = IMAGE.width / 1.5;
-  $: BOUNDARY = { width: BOUNDARY_SIZE, height: BOUNDARY_SIZE * ratio };
-  let offsetX = 0;
-  let offsetY = 0;
   let video: HTMLVideoElement = null;
   let canvas: HTMLCanvasElement = null;
   let imageEdge: HTMLElement = null;
+  const ratio = 5 / 8;
+  $: imageWidth = video?.offsetWidth / 1.5;
+  $: imageHeight = (video?.offsetWidth / 1.5) * ratio;
 
   const getVideoSource = async () => {
     try {
@@ -22,30 +19,21 @@
     }
   };
 
-  const drawImage = () => {
+  const drawImageToCanvas = () => {
     const picture = canvas.getContext("2d");
-    picture.clearRect(0, 0, IMAGE.width, IMAGE.height);
-    picture.drawImage(video, -offsetX, -offsetY, IMAGE.width, IMAGE.height);
+    const { left, top } = imageEdge.getBoundingClientRect();
+    picture.clearRect(0, 0, video.offsetWidth, video.offsetHeight);
+    picture.drawImage(
+      video,
+      -left,
+      -top,
+      video.offsetWidth,
+      video.offsetHeight
+    );
   };
-
-  const getOffset = (el: HTMLElement) => {
-    const rect = el.getBoundingClientRect();
-    return { left: rect.left + window.scrollX, top: rect.top + window.scrollY };
-  };
-
-  const observer = new ResizeObserver((entries) => {
-    for (let entry of entries) {
-      const { width, height } = entry.contentRect;
-      const { left, top } = getOffset(imageEdge);
-      IMAGE = { width, height };
-      offsetX = left;
-      offsetY = top;
-    }
-  });
 
   onMount(async () => {
     await getVideoSource();
-    observer.observe(video);
   });
 </script>
 
@@ -55,17 +43,13 @@
     <video autoplay playsinline bind:this={video} id="video" />
     <div
       id="videoEdge"
-      style="width:{BOUNDARY.width}px; height:{BOUNDARY.height}px;"
+      style="width:{imageWidth}px; height:{imageHeight}px;"
       bind:this={imageEdge}
     />
   </div>
-  <div width="100%" id="captureWrapper">
-    <button id="captureBtn" on:click={drawImage}>Capture</button>
-    <canvas
-      width={BOUNDARY.width}
-      height={BOUNDARY.height}
-      bind:this={canvas}
-    />
+  <div id="captureWrapper">
+    <button id="captureBtn" on:click={drawImageToCanvas}>Capture</button>
+    <canvas width={imageWidth} height={imageHeight} bind:this={canvas} />
   </div>
 </main>
 
